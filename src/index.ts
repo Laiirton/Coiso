@@ -1,4 +1,10 @@
-import { startWhatsappClient } from "./utils/whatsappClient";
+import { createWhatsappClient } from "./utils/whatsappClient";
 
 
-startWhatsappClient();
+async function main()
+{
+    const client = await createWhatsappClient();
+    console.log('Client started:', client);
+}
+
+main();

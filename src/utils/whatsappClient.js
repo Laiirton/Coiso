@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.startWhatsappClient = void 0;
+exports.createWhatsappClient = void 0;
 const wppconnect_1 = require("@wppconnect-team/wppconnect");
-function startWhatsappClient() {
+function createWhatsappClient() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const client = yield (0, wppconnect_1.create)({
@@ -49,14 +49,11 @@ function startWhatsappClient() {
                     WAToken2: '"1@lPpzwC..."',
                 }
             });
-            start(client);
+            return client;
         }
         catch (error) {
             console.log('Erro:', error);
         }
     });
 }
-exports.startWhatsappClient = startWhatsappClient;
-function start(client) {
-    throw new Error('Function not implemented.');
-}
+exports.createWhatsappClient = createWhatsappClient;

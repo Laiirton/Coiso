@@ -1,6 +1,6 @@
 import { Whatsapp, create } from '@wppconnect-team/wppconnect';
 
-export async function startWhatsappClient() {
+export async function createWhatsappClient() {
   try {
     const client = await create({
       session: 'Coiso', // Passe o nome da sessão do cliente que você deseja iniciar o bot
@@ -37,13 +37,11 @@ export async function startWhatsappClient() {
         WAToken2: '"1@lPpzwC..."',
       }
     });
-
-    start(client);
+  
+    return client;
   } catch (error) {
     console.log('Erro:', error);
   }
 }
 
-function start(client: Whatsapp) {
-  throw new Error('Function not implemented.');
-}
+
