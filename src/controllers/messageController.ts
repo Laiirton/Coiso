@@ -1,9 +1,20 @@
 import { Whatsapp } from '@wppconnect-team/wppconnect';
 
-
-export async function processMessage(client: Whatsapp, message: any)
+interface Contact 
 {
-  const contact = await client.getContact(message.from)
-  console.log(`Mensagem de ${contact?.pushname}: ${message.body}`)
+  pushname?: string;
+}
+
+interface Message
+{
+  from: string;
+  body: string;
+}
+
+export async function processMessage(client: Whatsapp, message: Message)
+{
+  const contact: Contact | undefined = await client.getContact(message.from);
+  console.log(`Message received from ${contact?.pushname}: ${message.body}`)
+
 
 }
