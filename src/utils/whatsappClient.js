@@ -15,7 +15,7 @@ function createWhatsappClient() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const client = yield (0, wppconnect_1.create)({
-                session: 'sessionName',
+                session: 'Coiso',
                 catchQR: (base64Qrimg, asciiQR, attempts, urlCode) => {
                     console.log('Número de tentativas para ler o código QR:', attempts);
                     console.log('Código QR em formato de texto:', asciiQR);
