@@ -15,31 +15,29 @@ function createWhatsappClient() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const client = yield (0, wppconnect_1.create)({
-                session: 'Coiso',
-                catchQR: (base64Qrimg, asciiQR, attempts, urlCode) => {
-                    console.log('Número de tentativas para ler o código QR:', attempts);
-                    console.log('Código QR em formato de texto:', asciiQR);
-                    console.log('Código QR em formato base64:', base64Qrimg);
-                    console.log('Código de URL (data-ref):', urlCode);
+                session: "Coiso",
+                catchQR: (asciiQR, attempts) => {
+                    console.log("Número de tentativas para ler o código QR:", attempts);
+                    console.log("Código QR em formato de texto:", asciiQR);
                 },
                 statusFind: (statusSession, session) => {
-                    console.log('Status da sessão:', statusSession); // return isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail || autocloseCalled || desconnectedMobile || deleteToken
+                    console.log("Status da sessão:", statusSession); // return isLogged || notLogged || browserClose || qrReadSuccess || qrReadFail || autocloseCalled || desconnectedMobile || deleteToken
                     // Crie uma sessão wss retornando "serverClose" no caso do servidor fechar
-                    console.log('Nome da sessão:', session);
+                    console.log("Nome da sessão:", session);
                 },
                 headless: true,
                 devtools: false,
                 useChrome: true,
                 debug: false,
                 logQR: true,
-                browserWS: '',
-                browserArgs: [''],
+                browserWS: "",
+                browserArgs: [""],
                 puppeteerOptions: {},
                 disableWelcome: false,
                 updatesLog: true,
                 autoClose: 60000,
-                tokenStore: 'file',
-                folderNameToken: './src/tokens/',
+                tokenStore: "file",
+                folderNameToken: "./src/tokens/",
                 // BrowserSessionToken
                 // Para receber o token do cliente, use a função await client.getSessionTokenBrowser()
                 sessionToken: {
@@ -47,12 +45,12 @@ function createWhatsappClient() {
                     WASecretBundle: '{"key":"+i/nRgWJ....","encKey":"kGdMR5t....","macKey":"+i/nRgW...."}',
                     WAToken1: '"0i8..."',
                     WAToken2: '"1@lPpzwC..."',
-                }
+                },
             });
             return client;
         }
         catch (error) {
-            console.log('Erro:', error);
+            console.log("Erro:", error);
         }
     });
 }

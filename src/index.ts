@@ -1,11 +1,14 @@
 import { createWhatsappClient } from "./utils/whatsappClient";
+import { processMessage } from "./controllers/messageController";
 
 
 async function main() {
   const client = await createWhatsappClient();
 
   client?.onMessage((message ) => {
-    console.log('Mensagem recebida:', message.body)
+
+    processMessage(client, message)
+
   })
 
 }

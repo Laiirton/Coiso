@@ -10,11 +10,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const whatsappClient_1 = require("./utils/whatsappClient");
+const messageController_1 = require("./controllers/messageController");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const client = yield (0, whatsappClient_1.createWhatsappClient)();
         client === null || client === void 0 ? void 0 : client.onMessage((message) => {
-            console.log('Mensagem recebida:', message.body);
+            (0, messageController_1.processMessage)(client, message);
         });
     });
 }
