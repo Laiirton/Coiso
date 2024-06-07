@@ -1,4 +1,4 @@
-import { Whatsapp, create } from '@wppconnect-team/wppconnect';
+import { create } from '@wppconnect-team/wppconnect';
 
 export async function createWhatsappClient() {
   try {

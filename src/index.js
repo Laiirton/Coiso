@@ -13,7 +13,9 @@ const whatsappClient_1 = require("./utils/whatsappClient");
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         const client = yield (0, whatsappClient_1.createWhatsappClient)();
-        console.log('Client started:', client);
+        client === null || client === void 0 ? void 0 : client.onMessage((message) => {
+            console.log('Mensagem recebida:', message.body);
+        });
     });
 }
 main();
