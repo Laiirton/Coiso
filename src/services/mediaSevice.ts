@@ -26,6 +26,7 @@ export async function stickerCreator(client: Whatsapp, message: Message) {
     await new Promise<void>((resolve, reject) => {
       ffmpeg(tempVideoPath)
         .output(tempWebpPath)
+        .videoFilters("scale=512:512")
         .on("end", () => {
           console.log("Video converted to WebP");
           resolve();

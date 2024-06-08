@@ -21,21 +21,6 @@ fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
 function stickerCreator(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
         if (message.type === "video") {
-            console.log("Video received");
-            console.log("Media received");
-            console.log("Media type:", message.type);
-            const media = yield client.downloadMedia(message.id);
-            console.log("Media downloaded");
-            yield client
-                .sendImageAsSticker(message.from, media)
-                .then(() => {
-                console.log("Sticker sent to", message.from);
-            })
-                .catch((err) => {
-                console.error("Error sending sticker:", err);
-            });
-        }
-        if (message.isMedia && message.type === "video") {
             console.log("Media received");
             console.log("Media type:", message.type);
             const media = yield client.downloadMedia(message.id);
@@ -50,6 +35,7 @@ function stickerCreator(client, message) {
             yield new Promise((resolve, reject) => {
                 (0, fluent_ffmpeg_1.default)(tempVideoPath)
                     .output(tempWebpPath)
+                    .videoFilters("scale=512:512")
                     .on("end", () => {
                     console.log("Video converted to WebP");
                     resolve();
