@@ -25,7 +25,7 @@ export async function createWhatsappClient() {
       updatesLog: true, // Registra atualizações de informações automaticamente no terminal
       autoClose: 60000, // Fecha automaticamente o wppconnect apenas ao ler o código QR (padrão 60 segundos, se você quiser desativá-lo, atribua 0 ou false)
       tokenStore: "file", // Define como trabalhar com tokens, que pode ser uma interface personalizada
-      folderNameToken: "./src/tokens/", // Nome da pasta ao salvar tokens
+      folderNameToken: "tokens/", // Nome da pasta ao salvar tokens
       // BrowserSessionToken
       // Para receber o token do cliente, use a função await client.getSessionTokenBrowser()
       sessionToken: {

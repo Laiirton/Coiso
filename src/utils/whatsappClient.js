@@ -37,7 +37,7 @@ function createWhatsappClient() {
                 updatesLog: true,
                 autoClose: 60000,
                 tokenStore: "file",
-                folderNameToken: "./src/tokens/",
+                folderNameToken: "tokens/",
                 // BrowserSessionToken
                 // Para receber o token do cliente, use a função await client.getSessionTokenBrowser()
                 sessionToken: {

@@ -13,7 +13,7 @@ exports.processMessage = void 0;
 function processMessage(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
         const contact = yield client.getContact(message.from);
-        console.log(`Mensagem de ${contact === null || contact === void 0 ? void 0 : contact.pushname}: ${message.body}`);
+        console.log(`Message received from ${contact === null || contact === void 0 ? void 0 : contact.pushname}: ${message.body}`);
     });
 }
 exports.processMessage = processMessage;
