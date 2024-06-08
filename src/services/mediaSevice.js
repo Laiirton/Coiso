@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.stickerCreator = void 0;
 function stickerCreator(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (message.isMedia || message.type === 'image' || message.type === 'video') {
+        if (message.isMedia && message.type === 'image') {
             console.log("Media received");
             console.log("Media type:", message.type);
             const media = yield client.downloadMedia(message.id).then((media) => __awaiter(this, void 0, void 0, function* () {
@@ -20,6 +20,17 @@ function stickerCreator(client, message) {
                 return media;
             }));
             yield client.sendImageAsSticker(message.from, media).then(() => {
+                console.log('Sticker sent to', message.from);
+            });
+        }
+        if (message.isMedia && message.type === 'video') {
+            console.log("Media received");
+            console.log("Media type:", message.type);
+            const media = yield client.downloadMedia(message.id).then((media) => __awaiter(this, void 0, void 0, function* () {
+                console.log('Media downloaded');
+                return media;
+            }));
+            yield client.sendImageAsStickerGif(message.from, media).then(() => {
                 console.log('Sticker sent to', message.from);
             });
         }
