@@ -40,6 +40,28 @@ export async function stickerCreator(client: Whatsapp, message: Message) {
     // Caminho do arquivo temporário para a saida do Webp
     const tempWebpPath = path.join('./', 'temp_webp.webp');
 
+    // Converter o vídeo para WebP usando ffmpeg
+    await new Promise<void>((resolve, reject)=> {
+      ffmpeg(tempVideoPath)
+      .output(tempWebpPath)
+      .on('end',()=> {
+        console.log('Video converted to WebP');
+        resolve();
+      })
+      .on('error', (err)=> {
+        console.log('Error converting video to WebP', err);
+        reject();
+      })
+      .run();
+    })
+
+    // ler o arquivo WebP convertido
+    const webpBuffer = fs.readFileSync(tempWebpPath);
+    const webpBase64 = webpBuffer.toString('base64');
+
+    console.log(webpBase64);
+    
+
     
 
     await client.sendImageAsStickerGif(message.from, media).then(() => { 
