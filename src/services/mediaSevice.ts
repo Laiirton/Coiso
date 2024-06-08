@@ -1,6 +1,6 @@
 import { Whatsapp, Message } from "@wppconnect-team/wppconnect";
 
-export async function sendSticker(client: Whatsapp, message: Message) {
+export async function stickerCreator(client: Whatsapp, message: Message) {
   if (message.isMedia || message.type === 'image' || message.type === 'video') {
     console.log("Media received");
     console.log("Media type:", message.type);

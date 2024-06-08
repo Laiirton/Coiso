@@ -1,5 +1,5 @@
 import { Message, Whatsapp } from '@wppconnect-team/wppconnect';
-import { sendSticker } from '../services/mediaSevice';
+import { stickerCreator } from '../services/mediaSevice';
 
 // Extende a interface Message para incluir a propriedade caption
 interface ExtendedMessage extends Message {
@@ -16,6 +16,6 @@ export async function processMessage(client: Whatsapp, message: ExtendedMessage)
 
 
   if (caption === "!fig") {
-    await sendSticker(client, message);
+    await stickerCreator(client, message);
   }
 }

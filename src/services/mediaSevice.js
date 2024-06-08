@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendSticker = void 0;
-function sendSticker(client, message) {
+exports.stickerCreator = void 0;
+function stickerCreator(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
         if (message.isMedia || message.type === 'image' || message.type === 'video') {
             console.log("Media received");
@@ -25,4 +25,4 @@ function sendSticker(client, message) {
         }
     });
 }
-exports.sendSticker = sendSticker;
+exports.stickerCreator = stickerCreator;

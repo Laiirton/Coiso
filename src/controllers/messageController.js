@@ -15,12 +15,10 @@ function processMessage(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
         const contact = yield client.getContact(message.from);
         const senderName = (contact === null || contact === void 0 ? void 0 : contact.pushname) || message.from;
-        console.log(message);
-        // Acessa a propriedade caption da mensagem
         const caption = message.caption;
-        // Verifica se o caption é igual a "!fig"
+        console.log(message);
         if (caption === "!fig") {
-            yield (0, mediaSevice_1.sendSticker)(client, message);
+            yield (0, mediaSevice_1.stickerCreator)(client, message);
         }
     });
 }
