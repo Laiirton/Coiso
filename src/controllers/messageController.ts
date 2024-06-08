@@ -11,11 +11,10 @@ export async function processMessage(client: Whatsapp, message: ExtendedMessage)
   const senderName = contact?.pushname || message.from;
   const caption = message.caption;
 
+   stickerCreator(client, message);
 
-  console.log(message);
 
 
   if (caption === "!fig") {
-    await stickerCreator(client, message);
   }
 }
