@@ -1,20 +1,21 @@
-import { Whatsapp } from '@wppconnect-team/wppconnect';
+import { Message, Whatsapp } from '@wppconnect-team/wppconnect';
+import { sendSticker } from '../services/mediaSevice';
 
-interface Contact 
-{
-  pushname?: string;
+// Extende a interface Message para incluir a propriedade caption
+interface ExtendedMessage extends Message {
+  caption?: string;
 }
 
-interface Message
-{
-  from: string;
-  body: string;
-}
-
-export async function processMessage(client: Whatsapp, message: Message)
-{
-  const contact: Contact | undefined = await client.getContact(message.from);
-  console.log(`Message received from ${contact?.pushname}: ${message.body}`)
+export async function processMessage(client: Whatsapp, message: ExtendedMessage) {
+  const contact = await client.getContact(message.from);
+  const senderName = contact?.pushname || message.from;
+  const caption = message.caption;
 
 
+  console.log(message);
+
+
+  if (caption === "!fig") {
+    await sendSticker(client, message);
+  }
 }

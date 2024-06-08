@@ -10,10 +10,18 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.processMessage = void 0;
+const mediaSevice_1 = require("../services/mediaSevice");
 function processMessage(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
         const contact = yield client.getContact(message.from);
-        console.log(`Message received from ${contact === null || contact === void 0 ? void 0 : contact.pushname}: ${message.body}`);
+        const senderName = (contact === null || contact === void 0 ? void 0 : contact.pushname) || message.from;
+        console.log(message);
+        // Acessa a propriedade caption da mensagem
+        const caption = message.caption;
+        // Verifica se o caption é igual a "!fig"
+        if (caption === "!fig") {
+            yield (0, mediaSevice_1.sendSticker)(client, message);
+        }
     });
 }
 exports.processMessage = processMessage;
