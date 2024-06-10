@@ -1,47 +1,37 @@
 import { Whatsapp, Message } from "@wppconnect-team/wppconnect";
-import ffmpeg from "fluent-ffmpeg";
-import ffmpegPath from "@ffmpeg-installer/ffmpeg";
-import fs from "fs";
+import fs from "fs/promises";
 import path from "path";
-
-ffmpeg.setFfmpegPath(ffmpegPath.path);
+import { exec } from "child_process";
+import { StickerTypes, createSticker } from "wa-sticker-formatter";
+import ffmpeg from "fluent-ffmpeg";
 
 export async function stickerCreator(client: Whatsapp, message: Message) {
   const tempDir = path.resolve("temp");
-  if (!fs.existsSync(tempDir)) {
-    fs.mkdirSync(tempDir);
-  }
+  await fs.mkdir(tempDir, { recursive: true });
 
   try {
     if (message.type === "video") {
-      console.log("Media received");
-      console.log("Media type:", message.type);
+      console.log("Media received:", message.type);
 
-      const base64Media = await client.downloadMedia(message.id);
-      const videoBuffer = Buffer.from(base64Media, 'base64');
-      const videoPath = path.join(tempDir, `${message.id}.mp4`);
-      const gifPath = path.join(tempDir, `${message.id}.gif`);
+      const bufferMedia = await client.decryptFile(message);
+      console.log(bufferMedia);
 
-      fs.writeFileSync(videoPath, videoBuffer);
+      const videoPath = path.resolve(tempDir, "temp.mp4");
+      await fs.writeFile(videoPath, bufferMedia);
+
+      const webpPath = path.resolve(tempDir, "output.webp");
 
       ffmpeg(videoPath)
-        .outputOptions('-vf', 'scale=320:-1')
-        .save(gifPath)
-        .on('end', async () => {
-          const gifBuffer = fs.readFileSync(gifPath);
-          const gifBase64 = gifBuffer.toString('base64');
-
-          await client.sendMessageOptions(message.from, gifBase64,{})
-          
-          fs.unlinkSync(videoPath); // Remove the temporary video file
-          fs.unlinkSync(gifPath); // Remove the temporary GIF file
-          console.log('Sticker sent successfully');
-        })
-        .on('error', (err) => {
-          console.error('Error converting video to GIF:', err);
+        .outputOptions("-vf", "scale= 300:300")
+        .toFormat("webp")
+        .save(webpPath)
+        .on("error", console.error)
+        .on("end", async () => {
+          console.log("WebP created");
+          await client.sendImageAsSticker(message.from, webpPath);
         });
     }
   } catch (error) {
-    console.error("An error occurred:", error);
+    console.error("Error:", error);
   }
 }

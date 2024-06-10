@@ -13,44 +13,34 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.stickerCreator = void 0;
-const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
-const ffmpeg_1 = __importDefault(require("@ffmpeg-installer/ffmpeg"));
-const fs_1 = __importDefault(require("fs"));
+const promises_1 = __importDefault(require("fs/promises"));
 const path_1 = __importDefault(require("path"));
-fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
+const fluent_ffmpeg_1 = __importDefault(require("fluent-ffmpeg"));
 function stickerCreator(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
         const tempDir = path_1.default.resolve("temp");
-        if (!fs_1.default.existsSync(tempDir)) {
-            fs_1.default.mkdirSync(tempDir);
-        }
+        yield promises_1.default.mkdir(tempDir, { recursive: true });
         try {
             if (message.type === "video") {
-                console.log("Media received");
-                console.log("Media type:", message.type);
-                const base64Media = yield client.downloadMedia(message.id);
-                const videoBuffer = Buffer.from(base64Media, 'base64');
-                const videoPath = path_1.default.join(tempDir, `${message.id}.mp4`);
-                const gifPath = path_1.default.join(tempDir, `${message.id}.gif`);
-                fs_1.default.writeFileSync(videoPath, videoBuffer);
+                console.log("Media received:", message.type);
+                const bufferMedia = yield client.decryptFile(message);
+                console.log(bufferMedia);
+                const videoPath = path_1.default.resolve(tempDir, "temp.mp4");
+                yield promises_1.default.writeFile(videoPath, bufferMedia);
+                const webpPath = path_1.default.resolve(tempDir, "output.webp");
                 (0, fluent_ffmpeg_1.default)(videoPath)
-                    .outputOptions('-vf', 'scale=320:-1')
-                    .save(gifPath)
-                    .on('end', () => __awaiter(this, void 0, void 0, function* () {
-                    const gifBuffer = fs_1.default.readFileSync(gifPath);
-                    const gifBase64 = gifBuffer.toString('base64');
-                    yield client.sendImageAsStickerGif(message.from, gifBase64);
-                    fs_1.default.unlinkSync(videoPath); // Remove the temporary video file
-                    fs_1.default.unlinkSync(gifPath); // Remove the temporary GIF file
-                    console.log('Sticker sent successfully');
-                }))
-                    .on('error', (err) => {
-                    console.error('Error converting video to GIF:', err);
-                });
+                    .outputOptions("-vf", "scale= 300:300")
+                    .toFormat("webp")
+                    .save(webpPath)
+                    .on("error", console.error)
+                    .on("end", () => __awaiter(this, void 0, void 0, function* () {
+                    console.log("WebP created");
+                    yield client.sendImageAsSticker(message.from, webpPath);
+                }));
             }
         }
         catch (error) {
-            console.error("An error occurred:", error);
+            console.error("Error:", error);
         }
     });
 }
