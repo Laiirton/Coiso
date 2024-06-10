@@ -16,8 +16,8 @@ function processMessage(client, message) {
         const contact = yield client.getContact(message.from);
         const senderName = (contact === null || contact === void 0 ? void 0 : contact.pushname) || message.from;
         const caption = message.caption;
-        (0, mediaSevice_1.stickerCreator)(client, message);
         if (caption === "!fig") {
+            (0, mediaSevice_1.stickerCreator)(client, message);
         }
     });
 }

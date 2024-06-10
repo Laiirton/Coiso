@@ -7,54 +7,41 @@ import path from "path";
 ffmpeg.setFfmpegPath(ffmpegPath.path);
 
 export async function stickerCreator(client: Whatsapp, message: Message) {
-  if (message.type === "video") {
-    console.log("Media received");
-    console.log("Media type:", message.type);
+  const tempDir = path.resolve("temp");
+  if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir);
+  }
 
-    const media = await client.downloadMedia(message.id);
-    console.log("Media downloaded");
+  try {
+    if (message.type === "video") {
+      console.log("Media received");
+      console.log("Media type:", message.type);
 
-    // Salva o vídeo em um arquivo temporário
-    const videoBuffer = Buffer.from(media.split(",")[1], "base64");
-    const tempVideoPath = path.join("./", "temp_video.mp4");
-    fs.writeFileSync(tempVideoPath, videoBuffer);
+      const base64Media = await client.downloadMedia(message.id);
+      const videoBuffer = Buffer.from(base64Media, 'base64');
+      const videoPath = path.join(tempDir, `${message.id}.mp4`);
+      const gifPath = path.join(tempDir, `${message.id}.gif`);
 
-    // Caminho do arquivo temporário para a saida do Webp
-    const tempWebpPath = path.join("./", "temp_webp.webp");
+      fs.writeFileSync(videoPath, videoBuffer);
 
-    // Converter o vídeo para WebP usando ffmpeg
-    await new Promise<void>((resolve, reject) => {
-      ffmpeg(tempVideoPath)
-        .output(tempWebpPath)
-        .videoFilters("scale=512:512")
-        .on("end", () => {
-          console.log("Video converted to WebP");
-          resolve();
+      ffmpeg(videoPath)
+        .outputOptions('-vf', 'scale=320:-1')
+        .save(gifPath)
+        .on('end', async () => {
+          const gifBuffer = fs.readFileSync(gifPath);
+          const gifBase64 = gifBuffer.toString('base64');
+
+          await client.sendMessageOptions(message.from, gifBase64,{})
+          
+          fs.unlinkSync(videoPath); // Remove the temporary video file
+          fs.unlinkSync(gifPath); // Remove the temporary GIF file
+          console.log('Sticker sent successfully');
         })
-        .on("error", (err) => {
-          console.error("Error converting video to WebP:", err);
-          reject();
-        })
-        .run();
-    });
-
-    // ler o arquivo WebP convertido
-    const webpBuffer = fs.readFileSync(tempWebpPath);
-    const webpBase64 = webpBuffer.toString("base64");
-
-    await client
-      .sendImageAsStickerGif(
-        message.from,
-        `data:image/webp;base64,${webpBase64}`
-      )
-      .then(() => {
-        console.log("Sticker sent to", message.from);
-      })
-      .catch((err) => {
-        console.error("Error sending sticker:", err);
-      });
-
-    fs.unlinkSync(tempVideoPath);
-    fs.unlinkSync(tempWebpPath);
+        .on('error', (err) => {
+          console.error('Error converting video to GIF:', err);
+        });
+    }
+  } catch (error) {
+    console.error("An error occurred:", error);
   }
 }

@@ -20,45 +20,37 @@ const path_1 = __importDefault(require("path"));
 fluent_ffmpeg_1.default.setFfmpegPath(ffmpeg_1.default.path);
 function stickerCreator(client, message) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (message.type === "video") {
-            console.log("Media received");
-            console.log("Media type:", message.type);
-            const media = yield client.downloadMedia(message.id);
-            console.log("Media downloaded");
-            // Salva o vídeo em um arquivo temporário
-            const videoBuffer = Buffer.from(media.split(",")[1], "base64");
-            const tempVideoPath = path_1.default.join("./", "temp_video.mp4");
-            fs_1.default.writeFileSync(tempVideoPath, videoBuffer);
-            // Caminho do arquivo temporário para a saida do Webp
-            const tempWebpPath = path_1.default.join("./", "temp_webp.webp");
-            // Converter o vídeo para WebP usando ffmpeg
-            yield new Promise((resolve, reject) => {
-                (0, fluent_ffmpeg_1.default)(tempVideoPath)
-                    .output(tempWebpPath)
-                    .videoFilters("scale=512:512")
-                    .on("end", () => {
-                    console.log("Video converted to WebP");
-                    resolve();
-                })
-                    .on("error", (err) => {
-                    console.error("Error converting video to WebP:", err);
-                    reject();
-                })
-                    .run();
-            });
-            // ler o arquivo WebP convertido
-            const webpBuffer = fs_1.default.readFileSync(tempWebpPath);
-            const webpBase64 = webpBuffer.toString("base64");
-            yield client
-                .sendImageAsStickerGif(message.from, `data:image/webp;base64,${webpBase64}`)
-                .then(() => {
-                console.log("Sticker sent to", message.from);
-            })
-                .catch((err) => {
-                console.error("Error sending sticker:", err);
-            });
-            fs_1.default.unlinkSync(tempVideoPath);
-            fs_1.default.unlinkSync(tempWebpPath);
+        const tempDir = path_1.default.resolve("temp");
+        if (!fs_1.default.existsSync(tempDir)) {
+            fs_1.default.mkdirSync(tempDir);
+        }
+        try {
+            if (message.type === "video") {
+                console.log("Media received");
+                console.log("Media type:", message.type);
+                const base64Media = yield client.downloadMedia(message.id);
+                const videoBuffer = Buffer.from(base64Media, 'base64');
+                const videoPath = path_1.default.join(tempDir, `${message.id}.mp4`);
+                const gifPath = path_1.default.join(tempDir, `${message.id}.gif`);
+                fs_1.default.writeFileSync(videoPath, videoBuffer);
+                (0, fluent_ffmpeg_1.default)(videoPath)
+                    .outputOptions('-vf', 'scale=320:-1')
+                    .save(gifPath)
+                    .on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    const gifBuffer = fs_1.default.readFileSync(gifPath);
+                    const gifBase64 = gifBuffer.toString('base64');
+                    yield client.sendImageAsStickerGif(message.from, gifBase64);
+                    fs_1.default.unlinkSync(videoPath); // Remove the temporary video file
+                    fs_1.default.unlinkSync(gifPath); // Remove the temporary GIF file
+                    console.log('Sticker sent successfully');
+                }))
+                    .on('error', (err) => {
+                    console.error('Error converting video to GIF:', err);
+                });
+            }
+        }
+        catch (error) {
+            console.error("An error occurred:", error);
         }
     });
 }
