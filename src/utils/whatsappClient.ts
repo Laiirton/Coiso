@@ -13,7 +13,7 @@ export async function createWhatsappClient() {
         // Crie uma sessão wss retornando "serverClose" no caso do servidor fechar
         console.log("Nome da sessão:", session);
       },
-      headless: true, // Chrome sem interface gráfica
+      headless: false, // Chrome sem interface gráfica
       devtools: false, // Não abrir as ferramentas de desenvolvimento
       useChrome: true, // Se false, usará a instância do Chromium
       debug: false, // Não abrir uma sessão de depuração
@@ -25,7 +25,7 @@ export async function createWhatsappClient() {
       updatesLog: true, // Registra atualizações de informações automaticamente no terminal
       autoClose: 60000, // Fecha automaticamente o wppconnect apenas ao ler o código QR (padrão 60 segundos, se você quiser desativá-lo, atribua 0 ou false)
       tokenStore: "file", // Define como trabalhar com tokens, que pode ser uma interface personalizada
-      folderNameToken: "tokens/", // Nome da pasta ao salvar tokens
+      folderNameToken: "./tokens/", // Nome da pasta ao salvar tokens
       // BrowserSessionToken
       // Para receber o token do cliente, use a função await client.getSessionTokenBrowser()
       sessionToken: {

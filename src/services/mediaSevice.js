@@ -29,13 +29,14 @@ function stickerCreator(client, message) {
                 yield promises_1.default.writeFile(videoPath, bufferMedia);
                 const webpPath = path_1.default.resolve(tempDir, "output.webp");
                 (0, fluent_ffmpeg_1.default)(videoPath)
-                    .outputOptions("-vf", "scale= 300:300")
+                    .outputOptions("-vf", "scale= 500:500")
+                    .outputOptions("-q:v", "50") // Adjust quality. Lower number = higher quality.
                     .toFormat("webp")
                     .save(webpPath)
                     .on("error", console.error)
                     .on("end", () => __awaiter(this, void 0, void 0, function* () {
                     console.log("WebP created");
-                    yield client.sendImageAsSticker(message.from, webpPath);
+                    yield client.sendImageAsStickerGif(message.from, webpPath);
                 }));
             }
         }

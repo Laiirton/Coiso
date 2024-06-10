@@ -22,13 +22,14 @@ export async function stickerCreator(client: Whatsapp, message: Message) {
       const webpPath = path.resolve(tempDir, "output.webp");
 
       ffmpeg(videoPath)
-        .outputOptions("-vf", "scale= 300:300")
+        .outputOptions("-vf", "scale= 500:500")
+        .outputOptions("-q:v", "50") // Adjust quality. Lower number = higher quality.
         .toFormat("webp")
         .save(webpPath)
         .on("error", console.error)
         .on("end", async () => {
           console.log("WebP created");
-          await client.sendImageAsSticker(message.from, webpPath);
+          await client.sendImageAsStickerGif(message.from, webpPath);
         });
     }
   } catch (error) {
